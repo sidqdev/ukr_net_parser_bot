@@ -14,9 +14,9 @@ def parse_ukrnet():
     soup = bs4.BeautifulSoup(html, 'html.parser')
     for new_item in soup.find('article').find_all('section'):
         time = new_item.find('time').text
-        new = new_item.find('a')
+        new = new_item.find('a', {'class': 'im-tl_a'})
         title = new.text
-        url = new['href']
+        url = new.href
         news.append(
             {'Title': title, 'Url': url, 'Date': time}
         )
@@ -26,7 +26,6 @@ def parse_ukrnet():
 async def parse():
 
     news = parse_ukrnet()
-    print(news)
     for new in news:
         if await content.is_exist(new.get('Title')):
             continue
