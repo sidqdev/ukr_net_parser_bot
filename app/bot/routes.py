@@ -10,4 +10,4 @@ dp.register_callback_query_handler(handlers.get_main, lambda e: e.data == 'main'
 dp.register_callback_query_handler(handlers.main, state='main')
 
 dp.register_message_handler(handlers.add_phrase, state='phrases')
-dp.register_callback_query_handler(handlers.phrases, state='phrases')
+dp.register_callback_query_handler(handlers.delete_phrase, state='phrases')

@@ -7,6 +7,7 @@ async def main(state: FSMContext):
     text = 'Головне меню'
     buttons = [
         {'text': 'Про бот', 'data': 'info'},
+        {'text': 'Добавить слово', 'data': 'phrases'},
         {'text': 'Ключові слова', 'data': 'phrases'}
     ]
     await state.set_state('main')
@@ -38,9 +39,6 @@ async def phrases(user_id: int, state: FSMContext):
             [{'text': phrase.get('text'), 'data': None}, {'text': 'Видалити', 'data': f'delete_{phrase.get("id")}'}]
         )
 
-    buttons.append([
-        {'text': 'Додати ключевое слово', 'data': 'add_phrase'},
-    ])
     buttons.append([
         {'text': 'Назад', 'data': 'main'},
     ])

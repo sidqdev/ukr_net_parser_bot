@@ -14,14 +14,11 @@ async def add_phrase(message: Message, state: FSMContext):
     await state.update_data({'message_id': msg.message_id})
 
 
-
-async def phrases(callback: CallbackQuery, state: FSMContext):
-    if callback.data.startswith('delete_'):
-        phrase_id = int(callback.data.split("_")[-1])
-        await user.delete_phrase(phrase_id, callback.from_user.id)
-        msg = await callback.message.edit_text(**await menu.phrases(callback.from_user.id, state))
-        await state.update_data({'message_id': msg.message_id})
+async def delete_phrase(callback: CallbackQuery, state: FSMContext):
+    if not callback.data.startswith('delete_'):
         return
-
-    if callback.data == 'add_phrase':
-        
+    
+    phrase_id = int(callback.data.split("_")[-1])
+    await user.delete_phrase(phrase_id, callback.from_user.id)
+    msg = await callback.message.edit_text(**await menu.phrases(callback.from_user.id, state))
+    await state.update_data({'message_id': msg.message_id})

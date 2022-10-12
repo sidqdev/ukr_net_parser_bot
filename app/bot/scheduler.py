@@ -5,7 +5,7 @@ from app.database import user
 from datetime import datetime
 import requests 
 
-INTERVAL = 60
+INTERVAL = 600
 
 async def parse():
     resp = requests.get('https://www.ukr.net/dat/smart/struct.9.ua.json', headers={'User-Agent': UserAgent().random})
