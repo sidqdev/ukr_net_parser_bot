@@ -1,34 +1,37 @@
 import asyncio
 from fake_useragent import UserAgent
 from .loader import scheduler, bot 
-from app.database import user
-from datetime import datetime
+from app.database import user, content
 import requests 
+import bs4
 
 INTERVAL = 600
 
+
+def parse_ukrnet():
+    news = list()
+    html = requests.get('https://www.ukr.net/news/main.html', headers={'User-Agent': UserAgent().random}).text
+    soup = bs4.BeautifulSoup(html, 'html.parser')
+    for new_item in soup.find('article').find_all('section'):
+        time = new_item.find('time').text
+        new = new_item.find('a')
+        title = new.text
+        url = new['href']
+        news.append(
+            {'Title': title, 'Url': url, 'Date': time}
+        )
+
+    return news[:10][::-1]
+
 async def parse():
-    resp = requests.get('https://www.ukr.net/dat/smart/struct.9.ua.json', headers={'User-Agent': UserAgent().random})
-    if resp.status_code != 200:
-        return
-    data = resp.json()
-    if not data:
-        return
 
-    news = data[0].get('News')
-    now = datetime.now()
-    now_seconds = now.hour * 3600 + now.minute * 60
-
+    news = parse_ukrnet()
+    print(news)
     for new in news:
-        print(new.get('Title'))
-        hours, minutes = map(int, new.get("Date").split(':'))
-        seconds = hours * 3600 + minutes * 60
-        if not (now_seconds > seconds and now_seconds - seconds < INTERVAL):
+        if await content.is_exist(new.get('Title')):
             continue
-        print(1)
         users = await user.get_by_phrases(new.get('Title'))
-        print(users)
-        link = 'https://ukr.net' + new.get('Url')
+        link = new.get('Url')
         message = f'''{new.get('Date')} - <a href="{link}">{new.get('Title')}</a>'''
         for user_id in users:
             try:

@@ -14,3 +14,9 @@ class Phrase(models.Model):
 
     class Meta:
         db_table = 'bot_phrase'
+
+
+class OldNewId(models.Model):
+    content = models.TextField(primary_key=True, db_column='content')
+    class Meta:
+        db_table = 'bot_oldnews'
