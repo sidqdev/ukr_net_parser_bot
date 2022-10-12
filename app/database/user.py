@@ -33,6 +33,18 @@ async def get_phrases(user_id: int, conn: Connection = None):
 
 @connection
 async def add_phrase(phrase: str, user_id: int, conn: Connection = None):
+    q = '''SELECT *
+           FROM bot_phrase
+           WHERE user_id = $1 AND text = $2'''
+    if await conn.fetchrow(q, user_id, phrase.lower()):
+        return 'already_exist'
+    
+    q = '''SELECT COUNT(*)
+           FROM bot_phrase
+           WHERE user_id = $1'''
+    if await conn.fetchval(q, user_id) > 10:
+        return 'too_many_phrases'
+
     q = '''INSERT INTO bot_phrase(user_id, text)
            SELECT usr.id, $1
            FROM bot_user AS usr

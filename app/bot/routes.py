@@ -11,3 +11,6 @@ dp.register_callback_query_handler(handlers.main, state='main')
 
 dp.register_message_handler(handlers.add_phrase, state='phrases')
 dp.register_callback_query_handler(handlers.delete_phrase, state='phrases')
+
+dp.register_callback_query_handler(handlers.fast_add_phrase_handler, state='fast_add_phrase')
+dp.register_message_handler(handlers.fast_add_phrase, state='*')

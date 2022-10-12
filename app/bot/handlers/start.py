@@ -11,4 +11,4 @@ async def start(message: Message, state: FSMContext):
 
 async def get_main(callback: CallbackQuery, state: FSMContext):
     await callback.message.edit_text(**await menu.main(state))
-    
+

@@ -54,3 +54,16 @@ async def add_phrase(state: FSMContext):
     return {
         'text': text
     }
+
+
+async def fast_add_phrase(state: FSMContext):
+    text = 'Бажаєте добавити нове слово?'
+    buttons = [
+        {'text': 'Так', 'data': 'fast_add_phrase'},
+        {'text': 'Ні', 'data': 'main'},
+    ]
+    await state.set_state('fast_add_phrase')
+    return {
+        'text': text,
+        'reply_markup': InlineKeyboard(*buttons)
+    }
