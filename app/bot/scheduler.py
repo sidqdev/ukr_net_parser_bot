@@ -10,7 +10,9 @@ INTERVAL = 600
 
 def parse_ukrnet():
     news = list()
-    resp = requests.get('https://www.ukr.net/news/main.html', headers={'User-Agent': UserAgent(use_cache_server=False).random})
+    # ua = UserAgent(use_cache_server=False).random
+    ua = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.67 Safari/537.36'
+    resp = requests.get('https://www.ukr.net/news/main.html', headers={'User-Agent': ua})
     resp.raise_for_status()
     html = resp.text
     soup = bs4.BeautifulSoup(html, 'html.parser')
