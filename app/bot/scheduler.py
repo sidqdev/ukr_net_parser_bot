@@ -10,8 +10,8 @@ INTERVAL = 600
 
 def parse_ukrnet():
     news = list()
-    ua = UserAgent(use_cache_server=False).random
-    # ua = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.67 Safari/537.36'
+    # ua = UserAgent(use_cache_server=False).random
+    ua = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0) Gecko/20100101 Firefox/40.1'
     resp = requests.get('https://www.ukr.net/news/main.html', headers={'User-Agent': ua})
     resp.raise_for_status()
     html = resp.text
