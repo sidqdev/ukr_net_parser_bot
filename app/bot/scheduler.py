@@ -10,7 +10,9 @@ INTERVAL = 600
 
 def parse_ukrnet():
     news = list()
-    html = requests.get('https://www.ukr.net/news/main.html', headers={'User-Agent': UserAgent(use_cache_server=False).random}).text
+    resp = requests.get('https://www.ukr.net/news/main.html', headers={'User-Agent': UserAgent(use_cache_server=False).random})
+    resp.raise_for_status()
+    html = resp.text
     soup = bs4.BeautifulSoup(html, 'html.parser')
     for new_item in soup.find('article').find_all('section'):
         time = new_item.find('time').text
