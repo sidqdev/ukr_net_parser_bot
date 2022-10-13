@@ -16,7 +16,7 @@ def parse_ukrnet():
         time = new_item.find('time').text
         new = new_item.find('a', {'class': 'im-tl_a'})
         title = new.text
-        url = new.href
+        url = new['href']
         news.append(
             {'Title': title, 'Url': url, 'Date': time}
         )
@@ -34,7 +34,7 @@ async def parse():
         message = f'''{new.get('Date')} - <a href="{link}">{new.get('Title')}</a>'''
         for user_id in users:
             try:
-                await bot.send_message(user_id, message)
+                await bot.send_message(user_id, message, disable_web_page_preview=True)
             finally:
                 await asyncio.sleep(0.04)
         
