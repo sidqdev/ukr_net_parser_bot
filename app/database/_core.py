@@ -39,6 +39,7 @@ def connection(func):
         async with pool.acquire() as conn:
             res = await func(*args, **kwargs, conn=conn)
             await conn.close()
+        await pool.close()
         return res
 
     return wrap
