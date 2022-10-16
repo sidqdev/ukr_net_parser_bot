@@ -1,5 +1,4 @@
 import asyncio
-from fake_useragent import UserAgent
 from .loader import scheduler, bot 
 from app.database import user, content
 import requests 
@@ -10,21 +9,21 @@ INTERVAL = 600
 
 def parse_ukrnet():
     news = list()
-    # ua = UserAgent(use_cache_server=False).random
     ua = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0) Gecko/20100101 Firefox/40.1'
-    resp = requests.get('https://www.ukr.net/news/main.html', headers={'User-Agent': ua})
+    resp = requests.get('https://my.ua/', headers={'User-Agent': ua})
     resp.raise_for_status()
     html = resp.text
     soup = bs4.BeautifulSoup(html, 'html.parser')
-    for new_item in soup.find('article').find_all('section'):
-        time = new_item.find('time').text
-        new = new_item.find('a', {'class': 'im-tl_a'})
-        title = new.text
-        url = new['href']
+    items = soup.find('main').find_all('a', {'data-internal': "true"})
+    for i in items:
+        text_item = i.find('h4')
+        if not text_item:
+            continue
+        text = text_item.text
+        url = i['href']
         news.append(
-            {'Title': title, 'Url': url, 'Date': time}
+            {'Title': text, 'Url': 'https://my.ua' + url, 'Date': ''}
         )
-
     return news[:10][::-1]
 
 async def parse():
@@ -35,10 +34,10 @@ async def parse():
             continue
         users = await user.get_by_phrases(new.get('Title'))
         link = new.get('Url')
-        message = f'''{new.get('Date')} - <a href="{link}">{new.get('Title')}</a>'''
+        message = f'''<a href="{link}">{new.get('Title')}</a>'''
         for user_id in users:
             try:
-                await bot.send_message(user_id, message, disable_web_page_preview=True)
+                await bot.send_message(user_id, message, disable_web_page_preview=False)
             finally:
                 await asyncio.sleep(0.04)
         
