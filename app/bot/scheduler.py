@@ -1,34 +1,34 @@
 import asyncio
 from .loader import scheduler, bot 
 from app.database import user, content
-import requests 
+import aiohttp 
 import bs4
 
 INTERVAL = 600
 
 
-def parse_ukrnet():
+async def parse_ukrnet():
     news = list()
-    ua = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0) Gecko/20100101 Firefox/40.1'
-    resp = requests.get('https://my.ua/', headers={'User-Agent': ua})
-    resp.raise_for_status()
-    html = resp.text
-    soup = bs4.BeautifulSoup(html, 'html.parser')
-    items = soup.find('main').find_all('a', {'data-internal': "true"})
-    for i in items:
-        text_item = i.find('h4')
-        if not text_item:
-            continue
-        text = text_item.text
-        url = i['href']
-        news.append(
-            {'Title': text, 'Url': 'https://my.ua' + url, 'Date': ''}
-        )
-    return news[:10][::-1]
+    async with aiohttp.ClientSession() as session:
+        async with session.get('https://my.ua/') as resp:
+            resp.raise_for_status()
+            html = await resp.text()
+            soup = bs4.BeautifulSoup(html, 'html.parser')
+            items = soup.find('main').find_all('a', {'data-internal': "true"})
+            for i in items:
+                text_item = i.find('h4')
+                if not text_item:
+                    continue
+                text = text_item.text
+                url = i['href']
+                news.append(
+                    {'Title': text, 'Url': 'https://my.ua' + url, 'Date': ''}
+                )
+            return news[:10][::-1]
 
 async def parse():
 
-    news = parse_ukrnet()
+    news = await parse_ukrnet()
     for new in news:
         if await content.is_exist(new.get('Title')):
             continue
